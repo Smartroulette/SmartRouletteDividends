@@ -1,0 +1,45 @@
+//@import "../styles/custom_variables.scss";
+:host /deep/ {
+  .glyphicon-question-sign
+  {
+    font-size: 200%;
+    color: cornflowerblue;
+  }
+
+  .glyphicon-ok-sign
+  {
+    font-size: 200%;
+    color: green;
+  }
+  thead
+  {
+    font-size: 120%;
+    font-weight: 800;
+  }
+
+  .important-text
+  {
+    color: white;
+    font-weight: 700;
+    font-size: 105%;
+  }
+
+  .selected
+  {
+    background: #ffd288 !important;
+  }
+
+  .allowSelection
+  {
+    cursor: pointer;
+  }
+  .alert
+  {
+    margin: 10px;
+  }
+
+  .alert-info
+  {
+    background: #68bef9 ;
+  }
+}

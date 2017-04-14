@@ -1,0 +1,82 @@
+<div    >
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>#</td>
+                    <td>Payout block</td>
+                    <td>Amount (ETH)</td>
+                    <td>Success</td>
+                </tr>
+                </thead>
+                <tbody>
+
+                    <tr class="allowSelection" *ngFor="let dividend of dividendPeriods; let n=index" (click)="Select(dividend)" [ngClass]="{'selected':selectedPeriod === dividend}">
+                        <td>{{n + 1}}</td>
+                        <td>{{dividend?.BlockDividend}}</td>
+                        <td>{{dividend?.GetAmountInETH()}}</td>
+                        <td> <span class="glyphicon"
+                                   [ngClass]="{'glyphicon-question-sign': dividend.AllPaymentsSent==false,
+                                               'glyphicon-ok-sign': dividend.AllPaymentsSent==true}" aria-hidden="true"></span> </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-7">
+            <div class="form-group" [ngClass]="{'has-error': !IsAddressHolderValid()}">
+                <label for="address"><h5>Enter your Ethereum address</h5></label>
+                <input type="text"  [(ngModel)]="AddressHolder" (ngModelChange)="AddressChanged()" class="form-control" id="address" placeholder="Address">
+            </div>
+
+            <div *ngIf="IsAddressHolderValid()" class="alert alert-info" role="alert">
+                <div *ngIf="HolderHasNoTokens()">
+                    <h5>Address <a href="https://etherscan.io/address/{{AddressHolder}}">{{AddressHolder}}</a> doesn't belong to a token holder.</h5>
+                    <h5>You have no RLT tokens in the payout block {{selectedPeriod?.BlockDividend}}</h5>
+                    <div *ngIf="HolderTokensLatest && !HolderTokensLatest.isZero()">
+                        <h5>Now you have a <span class="important-text"> {{HolderTokensLatest}}</span> RLT tokens</h5>
+                        <h5>You need to have at least 1000 RLT tokens to get payment</h5>
+                    </div>
+                    <h5>Your total payout is 0</h5>
+                </div>
+
+                <div *ngIf="HolderHasNotEnoughTokens()">
+                    <h5>Address <a href="https://etherscan.io/address/{{AddressHolder}}">{{AddressHolder}}</a> has not enough tokens to get payment.</h5>
+                    <h5>You have <span class="important-text">{{HolderTokens}}</span> tokens in the block <span class="important-text">{{selectedPeriod?.BlockDividend}}</span></h5>
+                    <h5>You need to have at least 1000 RLT tokens</h5>
+
+                    <div *ngIf="HolderTokensLatest && HolderTokens && HolderTokensLatest.greaterThan(HolderTokens)">
+                        <h5>Now you have <span class="important-text">{{HolderTokensLatest}}</span> tokens</h5>
+                        <h5>You need to have at least 1000 RLT tokens to get payment</h5>
+                    </div>
+                    <h5>Your total payout is 0</h5>
+                </div>
+
+                <div *ngIf="HolderHasEnoughTokens()">
+                    <h5>Address <a href="https://etherscan.io/address/{{AddressHolder}}">{{AddressHolder}}</a></h5>
+                    <h5>You have <span class="important-text">{{HolderTokens}}</span> tokens in the block <span class="important-text">{{selectedPeriod?.BlockDividend}}</span></h5>
+                    <div *ngIf="HolderTokensLatest && HolderTokensLatest.greaterThan(HolderTokens)">
+                        <h5>Now you have a <span class="important-text">{{HolderTokensLatest}}</span> RLT tokens</h5>
+                    </div>
+                    <h5>Your total payout <img *ngIf="!dividentsAmountFromBlockcain" src="/loading.gif"> <span class="important-text">{{ToEth(dividentsAmountFromBlockcain)}}</span> ETH (calculated via blockchain)</h5>
+                    <h5>Ethereum transaction fee <img *ngIf="!fee" src="/loading.gif"> <span class="important-text">{{ToEth(fee)}}</span></h5>
+                    <h5>You got TotalPayout - EthereumTransactionFee = <span class="important-text">
+                <img *ngIf="!(dividentsAmountFromBlockcain && fee)" src="/loading.gif">
+                {{dividentsAmountFromBlockcain && fee && ToEth(dividentsAmountFromBlockcain.minus(fee))}} ETH</span>
+                    </h5>
+                    <h5>You can check transaction <img *ngIf="!(activeHolderInfo && activeHolderInfo.TransactionHash)" src="/loading.gif"> <a href="{{activeHolderInfo?.TransactionHashUrl}}">{{activeHolderInfo?.TransactionHash}}</a></h5>
+                    <br>
+                    <h5>Your tokens cost {{HolderTokens*1.5/1000}} ETH</h5>
+                    <h5>{{(dividentsAmountFromBlockcain && fee && ToEth(dividentsAmountFromBlockcain.minus(fee))) / (HolderTokens*1.5/1000) * 100 }} % per week</h5>
+                    <h5>{{(dividentsAmountFromBlockcain && fee && ToEth(dividentsAmountFromBlockcain.minus(fee))) / (HolderTokens*1.5/1000) * 100 * 4 }} % per month</h5>
+                    <h5>{{(dividentsAmountFromBlockcain && fee && ToEth(dividentsAmountFromBlockcain.minus(fee))) / (HolderTokens*1.5/1000) * 100 * 4 *12 }} % per year</h5>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
